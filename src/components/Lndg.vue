@@ -1,7 +1,7 @@
 <template>
     <div class="wrap">
         <router-link :to="{ name: 'Wave'}" v-text="'wave'" />
-        <router-link :to="{ name: 'Sheep'}" v-text="'양'" />
+        <!-- <router-link :to="{ name: 'Sheep'}" v-text="'양'" /> -->
     </div>
 </template>
 
@@ -19,10 +19,10 @@ export default {
         height: 100vh;
 
         a {
-            width: 100px;
-            height: 100px;
-            border: 1px solid #333;
-            background-color: #999;
+            // width: 100px;
+            // height: 100px;
+            // border: 1px solid #333;
+            // background-color: #999;
         }
     }
 </style>

@@ -20,12 +20,12 @@ export default new Router({
                 {
                     path: 'wave',
                     name: 'Wave',
-                    component: () => import('./components/temp/Wave.vue')
+                    component: () => import('./components/temp/wave/Pge.vue')
                 },
                 {
                     path: 'sheep',
                     name: 'Sheep',
-                    component: () => import('./components/temp/Sheep.vue')
+                    component: () => import('./components/temp/sheep/Pge.vue')
                 }
             ]
 
