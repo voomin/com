@@ -11,10 +11,24 @@ export default new Router({
             name: 'Landing',
             component: () => import('./components/Lndg.vue')
         },
+
+        // 연습용
         {
-            path: '/sheep',
-            name: 'Sheep',
-            component: () => import('./components/temp/Sheep.vue')
+            path: '/temp',
+            component: () => import('./views/Temp.vue'),
+            children: [
+                {
+                    path: 'wave',
+                    name: 'Wave',
+                    component: () => import('./components/temp/Wave.vue')
+                },
+                {
+                    path: 'sheep',
+                    name: 'Sheep',
+                    component: () => import('./components/temp/Sheep.vue')
+                }
+            ]
+
         }
     ]
 });
