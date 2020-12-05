@@ -26,6 +26,11 @@ export default new Router({
                     path: 'sheep',
                     name: 'Sheep',
                     component: () => import('./components/temp/sheep/Pge.vue')
+                },
+                {
+                    path: 'rope-box',
+                    name: 'RopeBox',
+                    component: () => import('./components/temp/RopeBox.vue')
                 }
             ]
 
