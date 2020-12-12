@@ -1,15 +1,15 @@
-import { createRouter, createWebHashHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 
 export default createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes: [
         {
             path: '',
             name: 'Landing',
-            component: () => import('./components/Lndg.vue')
+            component: () => import('./views/Lndg.vue')
         },
 
-        // 연습용
+        // 작업물 ㅎㅎ
         {
             path: '/temp',
             component: () => import('./views/Temp.vue'),
@@ -30,7 +30,6 @@ export default createRouter({
                     component: () => import('./components/temp/RopeBox.vue')
                 }
             ]
-
         }
     ]
 });

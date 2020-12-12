@@ -101,7 +101,6 @@ export default {
                 rotation: 0
             });
         }
-        this.$forceUpdate();
     },
 
     mounted() {
