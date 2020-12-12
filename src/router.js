@@ -11,23 +11,23 @@ export default createRouter({
 
         // 작업물 ㅎㅎ
         {
-            path: '/temp',
-            component: () => import('./views/Temp.vue'),
+            path: '/prj',
+            component: () => import('./views/Prj.vue'),
             children: [
                 {
                     path: 'wave',
                     name: 'Wave',
-                    component: () => import('./components/temp/wave/Pge.vue')
+                    component: () => import('./components/prj/wave/Pge.vue')
                 },
                 {
                     path: 'sheep',
                     name: 'Sheep',
-                    component: () => import('./components/temp/sheep/Pge.vue')
+                    component: () => import('./components/prj/sheep/Pge.vue')
                 },
                 {
                     path: 'rope-box',
                     name: 'RopeBox',
-                    component: () => import('./components/temp/RopeBox.vue')
+                    component: () => import('./components/prj/RopeBox.vue')
                 }
             ]
         }
