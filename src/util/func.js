@@ -1,4 +1,4 @@
-export const getRndm = (length) => Math.round(Math.random() * length);
+export const getRndm = (length) => Math.floor(Math.random() * length);
 
 // TouchEvent or MouseEvent에서 x, y 좌표 획득
 export const getClientXY = (evt) => {

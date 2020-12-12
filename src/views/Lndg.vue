@@ -2,6 +2,7 @@
     <div class="wrap">
         <router-link :to="{ name: 'Wave'}" v-text="'wave'" />
         <router-link :to="{ name: 'RopeBox'}" v-text="'밧줄 상자'" />
+        <router-link :to="{ name: 'Gradation'}" v-text="'Gradation'" />
         <!-- <router-link :to="{ name: 'Sheep'}" v-text="'양'" /> -->
     </div>
 </template>

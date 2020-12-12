@@ -28,6 +28,11 @@ export default createRouter({
                     path: 'rope-box',
                     name: 'RopeBox',
                     component: () => import('./components/prj/RopeBox.vue')
+                },
+                {
+                    path: 'gradation',
+                    name: 'Gradation',
+                    component: () => import('./components/prj/Gradation.vue')
                 }
             ]
         }
