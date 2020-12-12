@@ -6,15 +6,16 @@ module.exports = {
     },
     extends: [
         'airbnb-base',
-        'plugin:vue/vue3-recommended'
+        'plugin:vue/recommended'
     ],
-    // "settings": {
-    //     "import/resolver": { // alias import 설정
-    //         "alias": [
-    //             // ["@", path.resolve(__dirname, "./src")],
-    //             // ["canvas", "./src/service/canvas/canvas_libs"],
-    //             // ["blockly", "./src/service/canvas/blockly_libs"],
-    //             // ["interpreter", path.resolve(__dirname, "./src/service/canvas/interpreter")]
+    // settings: {
+    //     'import/resolver': { // alias import 설정
+    //         alias: [
+    //             ['@', path.resolve(__dirname, './src')],
+    //             ['canvas', './src/service/canvas/canvas_libs'],
+    //             ['blockly', './src/service/canvas/blockly_libs'],
+    //             ['interpreter', path.resolve(__dirname, './src/service/canvas/interpreter')],
+    //             ['util', path.resolve(__dirname, './src/cmn/util')]
     //         ]
     //     }
     // },
@@ -22,7 +23,8 @@ module.exports = {
         Blockly: true,
         createjs: true,
         Proton: true,
-        amplitude: true
+        amplitude: true,
+        fbq: true
     },
     rules: {
         indent: ['error', 4, { SwitchCase: 1 }], // js indent 관련 기존 사용 규칙 따르도록
