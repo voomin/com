@@ -20,7 +20,7 @@
             @touchstart="mousedown($event, rect)"
         />
 
-        <!--  -->
+        <!-- 밧줄 -->
         <g v-if="grabRect">
             <circle
                 class="point"
@@ -82,7 +82,7 @@ export default {
         }
     },
 
-    beforeDestroy() {
+    beforeUnmount() {
         this.intervalStop();
     },
 
@@ -121,6 +121,9 @@ export default {
                 const { clientX: x, clientY: y } = evt;
                 this.pointX = x;
                 this.pointY = y;
+
+                this.grabRect.pointX = this.pointX;
+                this.grabRect.pointY = this.pointY;
             }
         },
 
@@ -131,30 +134,31 @@ export default {
         intervalStart() {
             if (!this.interval) {
                 this.interval = setInterval(() => {
-                    if (this.grabRect) {
-                        const pointX = this.pointX - this.rectW / 2;
-                        const pointY = this.pointY - this.rectH / 2;
+                    this.rectArr.forEach((rect) => {
+                        if (rect.pointX) {
+                            const pointX = rect.pointX - this.rectW / 2;
+                            const pointY = rect.pointY - this.rectH / 2;
 
-                        const dx = pointX - this.grabRect.x;
-                        const dy = pointY - this.grabRect.y;
-                        const spdX = Math.abs(dx) / this.fps;
-                        const spd = Math.min(Math.max(spdX, 0), 1);
-                        const argsX = [Math.ceil(this.grabRect.x + (dx / 9)), pointX];
-                        const argsY = [Math.ceil(this.grabRect.y + (dy / 9)), pointY];
+                            const dx = pointX - rect.x;
+                            const dy = pointY - rect.y;
+                            const spdX = Math.abs(dx) / this.fps;
+                            const spd = Math.min(Math.max(spdX, 0), 1);
+                            const argsX = [Math.ceil(rect.x + (dx / 9)), pointX];
+                            const argsY = [Math.ceil(rect.y + (dy / 9)), pointY];
 
-                        let rotation = (30 / 1) * spd;
-                        rotation *= (dx > 0 ? 1 : -1);
+                            let rotation = (30 / 1) * spd;
+                            rotation *= (dx > 0 ? 1 : -1);
 
-                        this.grabRotation += (rotation - this.grabRotation) * 0.12;
+                            rect.rotation += (rotation - rect.rotation) * 0.12;
+                            rect.x = (dx > 0) ? Math.min(...argsX) : Math.max(...argsX);
+                            rect.y = (dy > 0) ? Math.min(...argsY) : Math.max(...argsY);
 
-                        this.grabRect.rotation = this.grabRotation;
-                        this.grabRect.x = (dx > 0) ? Math.min(...argsX) : Math.max(...argsX);
-                        this.grabRect.y = (dy > 0) ? Math.min(...argsY) : Math.max(...argsY);
-
-                        if (this.grabRect.x === pointX && this.grabRect.y === pointY) {
-                            this.grabDrop();
+                            if (rect.x === pointX && rect.y === pointY) {
+                                rect.pointX = null;
+                                rect.pointY = null;
+                            }
                         }
-                    }
+                    });
                 }, 1000 / this.fps);
             }
         },
