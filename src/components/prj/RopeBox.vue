@@ -1,6 +1,6 @@
 <template>
     <svg
-        :viewBox="`0 0 ${windowW} ${windowH}`"
+        :viewBox="`0 0 ${windowW - 3} ${windowH - 3}`"
         @mousemove="mousemove"
         @touchmove="mousemove"
         @mouseup="mouseup"
@@ -22,6 +22,7 @@
 
         <!-- 밧줄 -->
         <g v-if="grabRect">
+            <!-- 목적지 point -->
             <circle
                 class="point"
                 :cx="pointX"
@@ -37,6 +38,7 @@
                 :y2="grabRectY"
             />
 
+            <!-- 잡은 객체 point -->
             <circle
                 class="point"
                 :cx="grabRectX"
@@ -48,7 +50,7 @@
 </template>
 
 <script>
-import { getRandom } from '../../util/func';
+import { getRndm, getClientXY } from '../../util/func';
 
 export default {
     data() {
@@ -59,6 +61,8 @@ export default {
             windowW: window.innerWidth,
             windowH: window.innerHeight,
 
+            spd: 5, // 가속도
+
             pointX: 0,
             pointY: 0,
             pointR: 0,
@@ -67,18 +71,19 @@ export default {
             rectH: 100,
             rectArr: [],
             grabRect: null,
-            grabRotation: null
+            gapX: 0,
+            gapY: 0
 
         };
     },
 
     computed: {
         grabRectX() {
-            return this.grabRect.x + this.rectW / 2;
+            return this.grabRect.x + this.gapX;
         },
 
         grabRectY() {
-            return this.grabRect.y + this.rectH / 2;
+            return this.grabRect.y + this.gapY;
         }
     },
 
@@ -91,11 +96,14 @@ export default {
         const maxX = this.windowW - this.rectW;
         const maxY = this.windowH - this.rectH;
         for (let i = 0; i < 10; i++) {
-            const x = getRandom(maxX);
-            const y = getRandom(maxY);
+            const x = getRndm(maxX);
+            const y = getRndm(maxY);
+            // console.log(x2 + y2);
+            // const x = 0;
+            // const y = 0;
             this.rectArr.push({
-                width: 100,
-                height: 100,
+                width: this.rectW,
+                height: this.rectH,
                 x,
                 y,
                 rotation: 0
@@ -110,19 +118,23 @@ export default {
     methods: {
         mousedown(evt, rect) {
             if (!this.grabRect) {
+                const { clientX: x, clientY: y } = getClientXY(evt);
                 this.grabRect = rect;
+                this.gapX = x - rect.x;
+                this.gapY = y - rect.y;
+
                 this.mousemove(evt);
             }
         },
 
         mousemove(evt) {
             if (this.grabRect) {
-                const { clientX: x, clientY: y } = evt;
+                const { clientX: x, clientY: y } = getClientXY(evt);
                 this.pointX = x;
                 this.pointY = y;
 
-                this.grabRect.pointX = this.pointX;
-                this.grabRect.pointY = this.pointY;
+                this.grabRect.toX = x - this.gapX;
+                this.grabRect.toY = y - this.gapY;
             }
         },
 
@@ -133,31 +145,23 @@ export default {
         intervalStart() {
             if (!this.interval) {
                 this.interval = setInterval(() => {
-                    this.rectArr.forEach((rect) => {
-                        if (rect.pointX) {
-                            const pointX = rect.pointX - this.rectW / 2;
-                            const pointY = rect.pointY - this.rectH / 2;
+                    if (this.grabRect) {
+                        const {
+                            toX, toY, x, y
+                        } = this.grabRect;
+                        const dx = toX - x;
+                        const dy = toY - y;
+                        const spdX = Math.abs(dx) / this.fps;
+                        const spdY = Math.abs(dy) / this.fps;
+                        // const spd = Math.min(Math.max(spdX, 0), 1);
+                        // this.grabRect.spd += this.acl;
 
-                            const dx = pointX - rect.x;
-                            const dy = pointY - rect.y;
-                            const spdX = Math.abs(dx) / this.fps;
-                            const spd = Math.min(Math.max(spdX, 0), 1);
-                            const argsX = [Math.ceil(rect.x + (dx / 9)), pointX];
-                            const argsY = [Math.ceil(rect.y + (dy / 9)), pointY];
-
-                            let rotation = (30 / 1) * spd;
-                            rotation *= (dx > 0 ? 1 : -1);
-
-                            rect.rotation += (rotation - rect.rotation) * 0.12;
-                            rect.x = (dx > 0) ? Math.min(...argsX) : Math.max(...argsX);
-                            rect.y = (dy > 0) ? Math.min(...argsY) : Math.max(...argsY);
-
-                            if (rect.x === pointX && rect.y === pointY) {
-                                rect.pointX = null;
-                                rect.pointY = null;
-                            }
-                        }
-                    });
+                        this.grabRect.x += spdX * (dx > 0 ? this.spd : -this.spd);
+                        this.grabRect.y += spdY * (dy > 0 ? this.spd : -this.spd);
+                    }
+                    // this.rectArr.forEach((rect) => {
+                    //     console.log(rect);
+                    // });
                 }, 1000 / this.fps);
             }
         },
@@ -165,7 +169,6 @@ export default {
         grabDrop() {
             if (this.grabRect) {
                 // this.grabRect.rotation = 0;
-                this.grabRotation = 0;
                 this.grabRect = null;
             }
         },
