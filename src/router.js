@@ -33,6 +33,11 @@ export default createRouter({
                     path: 'gradation',
                     name: 'Gradation',
                     component: () => import('./components/prj/Gradation.vue')
+                },
+                {
+                    path: 'bouce-string',
+                    name: 'BounceString',
+                    component: () => import('./components/prj/bounceString/Pge.vue')
                 }
             ]
         }
