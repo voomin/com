@@ -38,6 +38,11 @@ export default createRouter({
                     path: 'bouce-string',
                     name: 'BounceString',
                     component: () => import('./components/prj/bounceString/Pge.vue')
+                },
+                {
+                    path: 'jump',
+                    name: 'Jump',
+                    component: () => import('./components/prj/Jump.vue')
                 }
             ]
         }
