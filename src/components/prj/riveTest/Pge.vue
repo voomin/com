@@ -1,7 +1,10 @@
 <template>
     <div>
         <div v-show="isLoad">
-            <canvas ref="riveCanvas2" />
+            <canvas
+                ref="riveCanvas2"
+                @click="click"
+            />
         </div>
         <div v-if="!isLoad">
             <h1>Rive Context 2D Example</h1>
@@ -17,7 +20,7 @@
 </template>
 
 <script>
-import { rive, riv } from 'util/rive';
+import { rive } from 'util/rive';
 // const loaderRiv = () => import('./rive/loader.riv');
 
 export default {
@@ -27,6 +30,8 @@ export default {
             interval: null,
 
             isLoad: false,
+
+            char: null,
 
             windowW: window.innerWidth,
             windowH: window.innerHeight
@@ -48,30 +53,23 @@ export default {
 
     },
 
-    mounted() {
+    async mounted() {
         const canvas = this.$refs.riveCanvas2;
-        let marty = null;
 
-        rive(canvas, {
-            riv: riv.marty,
+        this.char = await rive(canvas, {
+            riv: 'marty.riv',
+            anim: 'Animation1',
             w: this.windowW,
             h: this.windowH
-        }, (rtn) => {
+        }, () => {
             this.isLoad = true;
-            marty = rtn;
-
-            marty.anim('Wave');
-            marty.spd(0.3);
-
-            marty.stop();
-
-            setTimeout(() => {
-                marty.run();
-            }, 300);
         });
     },
 
     methods: {
+        click() {
+            this.char.anim('Wave');
+        }
     }
 };
 </script>

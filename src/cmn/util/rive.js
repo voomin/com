@@ -1,109 +1,106 @@
-const path = '/rive/';
-
-const map = new Map();
+const basePath = '/rive/';
 
 let id = 0;
 
 /* global Rive */
 /* eslint no-undef: "error" */
-export const rive = (canvas, {
-    riv, w = 100, h = 100
+export const rive = async (canvas, {
+    riv,
+    anim,
+    w = 100, h = 100
 }, cb) => {
-    if (riv) {
+    let rtn = null;
+    if (riv && anim) {
         try {
-            Rive({
-                locateFile: (file) => `https://unpkg.com/rive-canvas@0.6.7/${file}`
-            }).then((riveObj) => {
-                const req = new Request(riv);
-                fetch(req).then((res) => {
-                    return res.arrayBuffer();
-                }).then((buf) => {
-                    // we've got the raw bytes of the animation,
-                    // let's load them into a riveObj file
-                    const file = riveObj.load(new Uint8Array(buf));
-                    const artboard = file.defaultArtboard();
-                    const mainAnim = artboard.animation('Animation2');
-                    let myAnimInstance = new riveObj.LinearAnimationInstance(mainAnim);
+            const riveObj = await Rive({ locateFile: (file) => `https://unpkg.com/rive-canvas@0.6.7/${file}` });
+            const req = new Request(`${basePath}${riv}`);
+            const res = await fetch(req);
+            const buf = await res.arrayBuffer();
+            const file = riveObj.load(new Uint8Array(buf));
+            const artboard = file.defaultArtboard();
+            const firstAnim = artboard.animation(anim);
+            let animInstance = new riveObj.LinearAnimationInstance(firstAnim);
 
-                    const ctx = canvas.getContext('2d');
-                    const renderer = new riveObj.CanvasRenderer(ctx);
+            const ctx = canvas.getContext('2d');
+            const renderer = new riveObj.CanvasRenderer(ctx);
 
-                    // Set canvas size
-                    canvas.width = w;
-                    canvas.height = h;
-                    // canvas.height = 1000
+            // Set canvas size
+            canvas.width = w;
+            canvas.height = h;
 
-                    artboard.advance(0);
+            artboard.advance(0);
 
-                    ctx.save();
-                    renderer.align(riveObj.Fit.contain, riveObj.Alignment.center, {
-                        minX: 0,
-                        minY: 0,
-                        maxX: canvas.width,
-                        maxY: canvas.height
-                    }, artboard.bounds);
+            ctx.save();
+            renderer.align(riveObj.Fit.contain, riveObj.Alignment.center, {
+                minX: 0,
+                minY: 0,
+                maxX: canvas.width,
+                maxY: canvas.height
+            }, artboard.bounds);
 
-                    artboard.draw(renderer);
-                    ctx.restore();
+            artboard.draw(renderer);
+            ctx.restore();
 
-                    let lastTime = 0;
-                    let isRun = true;
-                    let playingSpd = 1;
+            let lastTime = 0;
+            let isRun = true;
+            let playingSpd = 1;
+            let actvAnim = anim;
 
-                    function draw(time) {
-                        if (!lastTime) {
-                            lastTime = time;
-                        }
-                        const elapsedTime = (time - lastTime) / 1000;
-                        lastTime = time;
+            const draw = (time) => {
+                if (!lastTime) {
+                    lastTime = time;
+                }
+                const elapsedTime = (time - lastTime) / 1000;
+                lastTime = time;
 
-                        myAnimInstance.advance(elapsedTime * playingSpd);
-                        myAnimInstance.apply(artboard, 1.0);
-                        artboard.advance(elapsedTime * playingSpd);
+                animInstance.advance(elapsedTime * playingSpd);
+                animInstance.apply(artboard, 1.0);
+                artboard.advance(elapsedTime * playingSpd);
 
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        ctx.save();
-                        renderer.align(riveObj.Fit.contain, riveObj.Alignment.center, {
-                            minX: 0,
-                            minY: 0,
-                            maxX: canvas.width,
-                            maxY: canvas.height
-                        }, artboard.bounds);
-                        artboard.draw(renderer);
-                        ctx.restore();
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
+                renderer.align(riveObj.Fit.contain, riveObj.Alignment.center, {
+                    minX: 0,
+                    minY: 0,
+                    maxX: canvas.width,
+                    maxY: canvas.height
+                }, artboard.bounds);
+                artboard.draw(renderer);
+                ctx.restore();
 
-                        if (isRun) requestAnimationFrame(draw);
+                if (isRun) requestAnimationFrame(draw);
+            };
+
+            requestAnimationFrame(draw);
+
+            // 전달해줄 객체
+            rtn = {
+                id: id++,
+                anim: (animName) => {
+                    if (actvAnim !== animName) {
+                        const animation = artboard.animation(animName);
+                        animInstance = new riveObj.LinearAnimationInstance(animation);
+                        actvAnim = animName;
                     }
-
+                },
+                stop: () => { isRun = false; },
+                run: () => {
+                    isRun = true;
                     requestAnimationFrame(draw);
+                },
+                spd: (spd) => { playingSpd = spd; }
+            };
 
-                    const rtn = {
-                        id,
-                        anim: (animation) => {
-                            const anim = artboard.animation(animation);
-                            myAnimInstance = new riveObj.LinearAnimationInstance(anim);
-                        },
-                        stop: () => { isRun = false; },
-                        run: () => {
-                            isRun = true;
-                            requestAnimationFrame(draw);
-                        },
-                        spd: (spd) => { playingSpd = spd; }
-                    };
-
-                    map.set(id++, rtn);
-
-                    cb(rtn);
-                });
-            });
+            // 전달
+            cb(rtn);
         } catch (err) {
             console.error(err);
         }
     } else {
-        console.log('파일경로를 전달해 주세요');
+        console.log('riv || anim 값이 없습니다.');
     }
+
+    return rtn;
 };
 
-export const riv = Object.freeze({
-    marty: `${path}marty.riv`
-});
+export const lint = '';
