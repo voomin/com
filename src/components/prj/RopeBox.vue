@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import { getRndm, getClientXY } from '../../util/func';
+import { getRndm, getClientXY } from 'util/func';
 
 export default {
     data() {

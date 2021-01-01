@@ -1,6 +1,8 @@
 const path = require('path');
 
-module.exports = {
+const resolve = (dir) => path.join(__dirname, dir);
+
+const config = {
     pages: {
         index: {
             // entry for the page
@@ -23,11 +25,12 @@ module.exports = {
         subpage: 'src/index.js'
     },
 
-    configureWebpack: {
-        resolve: {
-            alias: {
-                '@': path.join(__dirname, 'src/')
-            }
-        }
+    configureWebpack: (webpackConfig) => {
+        // alias 설정
+        webpackConfig.resolve.alias.util = resolve('src/cmn/util');
+        // .set('sass', resolve('src/assets/sass'))
+        // .set('util', resolve('src/cmn/util'));
     }
 };
+
+module.exports = config;

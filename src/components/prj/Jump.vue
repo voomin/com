@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { getClientXY } from '../../util/func';
+import { getClientXY } from 'util/func';
 
 export default {
     data() {

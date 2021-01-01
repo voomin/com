@@ -16,5 +16,3 @@ export const getClientXY = (evt) => {
 
     return { clientX, clientY };
 };
-
-export const lint = '';

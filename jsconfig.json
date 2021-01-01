@@ -1,0 +1,26 @@
+{
+    "include": [
+        // // vue 파일 전체
+        // "./src/page-entry/**/*.vue",
+        // "./src/cmn/components/",
+        // // vue 관련 js
+        // "./src/page-entry/*/*.js",
+        // // assets
+        // "./src/assets/**/*.js",
+        // // common
+        // "./src/cmn/**/*.js",
+        // // plugin
+        // "./src/plugin/*.js",
+        // // service
+        // "./src/service/**/*.js",
+        // utils
+        "./src/utils/**/*.js"
+    ],
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["src/*"],
+            "util/*": ["src/cmn/util/*"]
+        }
+    }
+}

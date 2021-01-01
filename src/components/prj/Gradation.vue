@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { getRndm } from '../../util/func';
+import { getRndm } from '../../cmn/util/func';
 
 export default {
     data() {
