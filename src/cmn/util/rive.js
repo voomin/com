@@ -1,5 +1,9 @@
 const path = '/rive/';
 
+const map = new Map();
+
+let id = 0;
+
 /* global Rive */
 /* eslint no-undef: "error" */
 export const rive = (canvas, {
@@ -19,7 +23,7 @@ export const rive = (canvas, {
                     const file = riveObj.load(new Uint8Array(buf));
                     const artboard = file.defaultArtboard();
                     const mainAnim = artboard.animation('Animation2');
-                    const myAnimInstance = new riveObj.LinearAnimationInstance(mainAnim);
+                    let myAnimInstance = new riveObj.LinearAnimationInstance(mainAnim);
 
                     const ctx = canvas.getContext('2d');
                     const renderer = new riveObj.CanvasRenderer(ctx);
@@ -43,6 +47,8 @@ export const rive = (canvas, {
                     ctx.restore();
 
                     let lastTime = 0;
+                    let isRun = true;
+                    let playingSpd = 1;
 
                     function draw(time) {
                         if (!lastTime) {
@@ -51,9 +57,9 @@ export const rive = (canvas, {
                         const elapsedTime = (time - lastTime) / 1000;
                         lastTime = time;
 
-                        myAnimInstance.advance(elapsedTime);
+                        myAnimInstance.advance(elapsedTime * playingSpd);
                         myAnimInstance.apply(artboard, 1.0);
-                        artboard.advance(elapsedTime);
+                        artboard.advance(elapsedTime * playingSpd);
 
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                         ctx.save();
@@ -66,12 +72,28 @@ export const rive = (canvas, {
                         artboard.draw(renderer);
                         ctx.restore();
 
-                        requestAnimationFrame(draw);
+                        if (isRun) requestAnimationFrame(draw);
                     }
 
                     requestAnimationFrame(draw);
 
-                    cb();
+                    const rtn = {
+                        id,
+                        anim: (animation) => {
+                            const anim = artboard.animation(animation);
+                            myAnimInstance = new riveObj.LinearAnimationInstance(anim);
+                        },
+                        stop: () => { isRun = false; },
+                        run: () => {
+                            isRun = true;
+                            requestAnimationFrame(draw);
+                        },
+                        spd: (spd) => { playingSpd = spd; }
+                    };
+
+                    map.set(id++, rtn);
+
+                    cb(rtn);
                 });
             });
         } catch (err) {

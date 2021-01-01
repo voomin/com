@@ -50,12 +50,24 @@ export default {
 
     mounted() {
         const canvas = this.$refs.riveCanvas2;
+        let marty = null;
+
         rive(canvas, {
             riv: riv.marty,
             w: this.windowW,
             h: this.windowH
-        }, () => {
+        }, (rtn) => {
             this.isLoad = true;
+            marty = rtn;
+
+            marty.anim('Wave');
+            marty.spd(0.3);
+
+            marty.stop();
+
+            setTimeout(() => {
+                marty.run();
+            }, 300);
         });
     },
 
