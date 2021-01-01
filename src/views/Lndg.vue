@@ -5,13 +5,39 @@
         <router-link :to="{ name: 'RopeBox'}" v-text="'밧줄 상자'" />
         <router-link :to="{ name: 'Gradation'}" v-text="'Gradation'" />
         <router-link :to="{ name: 'BounceString'}" v-text="'BounceString'" />
+        <router-link :to="{ name: 'RiveTest'}" v-text="'RiveTest'" />
         <!-- <router-link :to="{ name: 'Sheep'}" v-text="'양'" /> -->
     </div>
 </template>
 
 <script>
 export default {
+    data() {
+        return {
+            stageW: 0,
+            stageH: 0
+        };
+    },
 
+    beforeUnmount() {
+    },
+
+    created() {
+    },
+
+    mounted() {
+
+    },
+
+    methods: {
+        resize() {
+
+        },
+
+        animate() {
+
+        }
+    }
 };
 </script>
 
@@ -22,12 +48,14 @@ export default {
         align-items: center;
         height: 100vh;
         flex-wrap: wrap;
+        background-color: #2b2b2b;
 
         a {
-            // width: 100px;
-            // height: 100px;
-            // border: 1px solid #333;
-            // background-color: #999;
+            width: 100px;
+            height: 100px;
+            border-radius: 12%;
+            background-color: #D7D9DB;
+            box-shadow: 3px 3px 5px #333;
         }
     }
 </style>

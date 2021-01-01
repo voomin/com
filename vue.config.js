@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
     pages: {
         index: {
@@ -19,5 +21,13 @@ module.exports = {
         // and falls back to `public/index.html` if not found.
         // Output filename is inferred to be `subpage.html`.
         subpage: 'src/index.js'
+    },
+
+    configureWebpack: {
+        resolve: {
+            alias: {
+                '@': path.join(__dirname, 'src/')
+            }
+        }
     }
 };

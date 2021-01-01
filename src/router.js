@@ -43,6 +43,11 @@ export default createRouter({
                     path: 'jump',
                     name: 'Jump',
                     component: () => import('./components/prj/Jump.vue')
+                },
+                {
+                    path: 'rive-test',
+                    name: 'RiveTest',
+                    component: () => import('./components/prj/riveTest/Pge.vue')
                 }
             ]
         }

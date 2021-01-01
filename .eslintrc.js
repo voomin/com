@@ -1,4 +1,4 @@
-// const path = require('path');
+const path = require('path');
 
 module.exports = {
     parserOptions: {
@@ -8,17 +8,17 @@ module.exports = {
         'airbnb-base',
         'plugin:vue/recommended'
     ],
-    // settings: {
-    //     'import/resolver': { // alias import 설정
-    //         alias: [
-    //             ['@', path.resolve(__dirname, './src')],
-    //             ['canvas', './src/service/canvas/canvas_libs'],
-    //             ['blockly', './src/service/canvas/blockly_libs'],
-    //             ['interpreter', path.resolve(__dirname, './src/service/canvas/interpreter')],
-    //             ['util', path.resolve(__dirname, './src/cmn/util')]
-    //         ]
-    //     }
-    // },
+    settings: {
+        'import/resolver': { // alias import 설정
+            alias: [
+                ['@', path.resolve(__dirname, './src')]
+                // ['canvas', './src/service/canvas/canvas_libs'],
+                // ['blockly', './src/service/canvas/blockly_libs'],
+                // ['interpreter', path.resolve(__dirname, './src/service/canvas/interpreter')],
+                // ['util', path.resolve(__dirname, './src/cmn/util')]
+            ]
+        }
+    },
     globals: {
         Blockly: true,
         createjs: true,
