@@ -27,7 +27,6 @@
 
         <!-- 물체 -->
         <circle
-            v-if="isMove"
             :cx="x"
             :cy="y"
             :r="gridSize / 3"
@@ -52,6 +51,7 @@ export default {
     data() {
         return {
             fps: 60,
+            jumpHeight: 100,
             interval: null,
 
             isMove: false,
@@ -72,8 +72,10 @@ export default {
             y: 0,
 
             toX: 0,
-            toY: 0
+            toY: 0,
 
+            downX: 0,
+            downY: 0
         };
     },
 
@@ -117,52 +119,94 @@ export default {
         this.x = this.cGridX * this.gridSize;
         this.y = this.cGridY * this.gridSize;
 
-        console.log({ col: this.col, row: this.row });
+        this.downX = this.x;
+        this.downY = this.y;
+        this.toX = this.x;
+        this.toY = this.y;
     },
 
     mounted() {
-        this.intervalStart();
     },
 
     methods: {
-        anim() {
+        anim(startValue, toValue, time, cb) {
+            return new Promise((resolve) => {
+                const values = startValue.slice();
 
+                let interval;
+                let func;
+
+                if (toValue[0] >= values[0]) {
+                    func = () => {
+                        for (let i = 0; i < values.length; i++) {
+                            values[i] += (toValue[i] - startValue[i]) * (33 / time);
+                        }
+
+                        if (values[0] >= toValue[0]) {
+                            cb(toValue.slice(0));
+
+                            clearInterval(interval);
+                            resolve();
+                        } else {
+                            cb(values.slice(0));
+                        }
+                    };
+                } else {
+                    func = () => {
+                        for (let i = 0; i < values.length; i++) {
+                            values[i] += (toValue[i] - startValue[i]) * (33 / time);
+                        }
+
+                        if (values[0] <= toValue[0]) {
+                            cb(toValue.slice(0));
+
+                            clearInterval(interval);
+                            resolve();
+                        } else {
+                            cb(values.slice(0));
+                        }
+                    };
+                }
+
+                func();
+
+                interval = setInterval(func, 33);
+            });
         },
 
-        intervalStart() {
-            if (!this.interval) {
-                const spd = 3;
-                this.interval = setInterval(() => {
-                    const dx = this.toX - this.x;
-                    const dy = this.toY - this.y;
-                    const spdX = dx / this.fps;
-                    const spdY = dy / this.fps;
+        getY(x) {
+            const a = this.downX;
+            const b = this.downY;
+            const f = this.toX;
+            const g = this.toY;
+            const c = (a + f) / 2;
+            const d = Math.min(b, g) - this.jumpHeight;
 
-                    this.x += spdX * spd;
-                    this.y += spdY * spd;
-                }, 1000 / this.fps);
-            }
-        },
+            const A = (g * (a ** 2 - c ** 2) + d * (f ** 2 - a ** 2)
+            + b * (c ** 2 - f ** 2)) / (2 * ((g - d) * a + (b - g) * c + (d - b) * f));
+            const C = (b - d) / (a ** 2 - c ** 2 + 2 * A * (c - a));
+            const B = d - C * (c - A) ** 2;
 
-        intervalStop() {
-            if (this.interval) {
-                clearInterval(this.interval);
-                this.interval = null;
-            }
+            return C * ((x - A) ** 2) + B;
         },
 
         down(evt) {
             const { clientX: x, clientY: y } = getClientXY(evt);
+            this.downX = this.x;
+            this.downY = this.y;
             this.toX = x;
             this.toY = y;
             this.isMove = true;
-        },
 
-        getXY(gridX, gridY) {
-            return {
-                x: ((this.cGridX + gridX) * this.gridSize),
-                y: ((this.cGridY + gridY) * this.gridSize)
-            };
+            this.anim(
+                [this.downX, this.downY],
+                [this.toX, this.toY],
+                1000,
+                ([moveX]) => {
+                    this.x = moveX;
+                    this.y = this.getY(this.x);
+                }
+            );
         }
     }
 };
